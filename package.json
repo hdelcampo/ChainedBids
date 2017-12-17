@@ -1,0 +1,22 @@
+{
+  "name": "chained-bids",
+  "version": "0.0.1",
+  "description": "An eBay-like auctions system using Hyperledger",
+  "scripts": {
+    "test": "mocha --recursive"
+  },
+  "author": "Héctor &amp; Raúl",
+  "email": "hector.campo@alumnos.uva.es",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "composer-admin": "latest",
+    "composer-client": "latest",
+    "composer-common": "latest",
+    "composer-connector-embedded": "latest",
+    "chai": "latest",
+    "eslint": "latest",
+    "istanbul": "latest",
+    "mkdirp": "latest",
+    "mocha": "latest"
+  }
+}
