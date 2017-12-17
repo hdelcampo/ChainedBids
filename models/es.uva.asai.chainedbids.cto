@@ -1,19 +1,90 @@
 /**
- * Write your model definitions here
+ * Definitions for all important objects in the network
  */
 
 namespace es.uva.asai.chainedbids
 
-participant User identified by email {
+participant User identified by nif {
+  o String name
+  o String surName
   o String email
+  o String nif
 }
 
-asset SampleAsset identified by assetId {
-  o String assetId
-  o String value
+enum FirmType {
+  o PAYMENT_GATEWAY
+  o CARRIER
 }
 
-transaction ChangeAssetValue {
-  o String newValue
-  --> Asset relatedAsset
+participant Firm identified by id {
+  o String name
+  o String id
+  o FirmType type
+}
+
+participant Employee identified by id {
+  o String name
+  o String email
+  o String id
+}
+
+enum ProductStatus {
+  o PUBLISHED
+  o FOR_AUCTION
+  o SOLD
+  o PAID
+  o SENT
+  o DELIVERED
+  o RETURNED
+}
+
+asset Product identified by id {
+  o String id
+  o String name
+  o String description
+  o ProductStatus status
+  --> User seller
+}
+
+transaction AuctionStart {
+  o Double startingValue
+  --> Product product
+}
+
+transaction Offer {
+  o Double bidPrice
+  --> User bidder
+  --> Product product
+}
+
+transaction AuctionFinish {
+  o Double sellingPrice
+  --> Product product
+  --> User buyer
+}
+
+enum TransactionType {
+  o NORMAL
+  o RETURN
+}
+
+transaction Payment {
+  o Double amount
+  o TransactionType type
+  --> User payer
+  --> Product product
+}
+
+transaction productSending {
+  o TransactionType type
+  --> User sender
+  --> User receiver
+  --> Product product
+  --> Firm carrier
+}
+
+transaction productDelivery {
+  --> User receiver
+  --> Product product
+  --> Firm carrier
 }
