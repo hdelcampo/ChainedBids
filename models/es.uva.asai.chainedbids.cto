@@ -9,6 +9,7 @@ participant User identified by nif {
   o String surName
   o String email
   o String nif
+  o Double balance
 }
 
 enum FirmType {
@@ -28,26 +29,30 @@ participant Employee identified by id {
   o String id
 }
 
-enum ProductStatus {
+enum ProductState {
   o PUBLISHED
   o FOR_AUCTION
+  o PRICE_NOT_MET
   o SOLD
   o PAID
   o SENT
   o DELIVERED
-  o RETURNED
+  o TO_RETURN
+  o REFUNDED
 }
 
 asset Product identified by id {
   o String id
   o String name
   o String description
-  o ProductStatus status
+  o ProductState state
+  o Double initialPrice
+  o Offer bestOffer optional
   --> User seller
 }
 
 transaction AuctionStart {
-  o Double startingValue
+  o Double startingPrice
   --> Product product
 }
 
@@ -58,9 +63,7 @@ transaction Offer {
 }
 
 transaction AuctionFinish {
-  o Double sellingPrice
   --> Product product
-  --> User buyer
 }
 
 enum TransactionType {
@@ -69,22 +72,23 @@ enum TransactionType {
 }
 
 transaction Payment {
-  o Double amount
   o TransactionType type
-  --> User payer
   --> Product product
+  --> Firm gateway
 }
 
-transaction productSending {
-  o TransactionType type
-  --> User sender
-  --> User receiver
+transaction ProductSending {
   --> Product product
   --> Firm carrier
 }
 
-transaction productDelivery {
-  --> User receiver
+transaction ProductDelivery {
   --> Product product
   --> Firm carrier
+}
+
+transaction Incident {
+  o String description
+  --> Product product
+  --> Employee employee
 }
