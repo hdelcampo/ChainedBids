@@ -1,0 +1,128 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '2'
+
+services:
+
+  orderer.chainedbids.uva.es:
+    container_name: orderer.chainedbids.uva.es
+    image: hyperledger/fabric-orderer
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=debug
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      # enabled TLS
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: orderer
+    volumes:
+    - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+    - ../crypto-config/ordererOrganizations/chainedbids.uva.es/orderers/orderer.chainedbids.uva.es/msp:/var/hyperledger/orderer/msp
+    - ../crypto-config/ordererOrganizations/chainedbids.uva.es/orderers/orderer.chainedbids.uva.es/tls/:/var/hyperledger/orderer/tls
+    ports:
+      - 7050:7050
+
+  peer0.people.chainedbids.uva.es:
+    container_name: peer0.people.chainedbids.uva.es
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.people.chainedbids.uva.es
+      - CORE_PEER_ADDRESS=peer0.people.chainedbids.uva.es:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.people.chainedbids.uva.es:7051
+      - CORE_PEER_LOCALMSPID=PeopleMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/people.chainedbids.uva.es/peers/peer0.people.chainedbids.uva.es/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/people.chainedbids.uva.es/peers/peer0.people.chainedbids.uva.es/tls:/etc/hyperledger/fabric/tls
+    ports:
+      - 7051:7051
+      - 7053:7053
+
+  peer1.people.chainedbids.uva.es:
+    container_name: peer1.people.chainedbids.uva.es
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.people.chainedbids.uva.es
+      - CORE_PEER_ADDRESS=peer1.people.chainedbids.uva.es:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.people.chainedbids.uva.es:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.people.chainedbids.uva.es:7051
+      - CORE_PEER_LOCALMSPID=PeopleMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/people.chainedbids.uva.es/peers/peer1.people.chainedbids.uva.es/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/people.chainedbids.uva.es/peers/peer1.people.chainedbids.uva.es/tls:/etc/hyperledger/fabric/tls
+
+    ports:
+      - 8051:7051
+      - 8053:7053
+
+  peer2.people.chainedbids.uva.es:
+    container_name: peer2.people.chainedbids.uva.es
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer2.people.chainedbids.uva.es
+      - CORE_PEER_ADDRESS=peer2.people.chainedbids.uva.es:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer2.people.chainedbids.uva.es:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.people.chainedbids.uva.es:7051
+      - CORE_PEER_LOCALMSPID=PeopleMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/people.chainedbids.uva.es/peers/peer2.people.chainedbids.uva.es/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/people.chainedbids.uva.es/peers/peer2.people.chainedbids.uva.es/tls:/etc/hyperledger/fabric/tls
+
+    ports:
+      - 9051:7051
+      - 9053:7053
+
+  peer0.firms.chainedbids.uva.es:
+    container_name: peer0.firms.chainedbids.uva.es
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.firms.chainedbids.uva.es
+      - CORE_PEER_ADDRESS=peer0.firms.chainedbids.uva.es:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.firms.chainedbids.uva.es:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.firms.chainedbids.uva.es:7051
+      - CORE_PEER_LOCALMSPID=FirmsMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/firms.chainedbids.uva.es/peers/peer0.firms.chainedbids.uva.es/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/firms.chainedbids.uva.es/peers/peer0.firms.chainedbids.uva.es/tls:/etc/hyperledger/fabric/tls
+    ports:
+      - 10051:7051
+      - 10053:7053
+
+  peer1.firms.chainedbids.uva.es:
+    container_name: peer1.firms.chainedbids.uva.es
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.firms.chainedbids.uva.es
+      - CORE_PEER_ADDRESS=peer1.firms.chainedbids.uva.es:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.firms.chainedbids.uva.es:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.firms.chainedbids.uva.es:7051
+      - CORE_PEER_LOCALMSPID=FirmsMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/firms.chainedbids.uva.es/peers/peer1.firms.chainedbids.uva.es/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/firms.chainedbids.uva.es/peers/peer1.firms.chainedbids.uva.es/tls:/etc/hyperledger/fabric/tls
+    ports:
+      - 11051:7051
+      - 11053:7053
