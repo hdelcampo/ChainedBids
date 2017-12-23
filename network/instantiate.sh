@@ -47,3 +47,7 @@ composer network start -c PeerAdmin@chainedbids-network-people -a ../chainedbids
 composer card create -p profiles/connection-people.json -u alice -n chainedbids-network -c alice/admin-pub.pem -k alice/admin-priv.pem
 composer card import -f alice@chainedbids-network.card
 composer network ping -c alice@chainedbids-network
+
+composer card create -p profiles/connection-firms.json -u bob -n chainedbids-network -c bob/admin-pub.pem -k bob/admin-priv.pem
+composer card import -f bob@chainedbids-network.card
+composer network ping -c bob@chainedbids-network
