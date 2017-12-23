@@ -1,5 +1,5 @@
 {
-  "name": "chained-bids",
+  "name": "chainedbids-network",
   "version": "0.0.1",
   "description": "An eBay-like auctions system using Hyperledger",
   "scripts": {

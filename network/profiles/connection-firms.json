@@ -1,0 +1,49 @@
+{
+    "name": "chainedbids-network-firms",
+    "type": "hlfv1",
+    "mspID": "FirmsMSP",
+    "peers": [
+        {
+            "requestURL": "grpcs://localhost:10051",
+            "eventURL": "grpcs://localhost:10053",
+            "cert": "crypto-config/peerOrganizations/firms.chainedbids.uva.es/peers/peer0.firms.chainedbids.uva.es/tls/ca.crt",
+            "hostnameOverride": "peer0.firms.chainedbids.uva.es"
+        },
+        {
+            "requestURL": "grpcs://localhost:11051",
+            "eventURL": "grpcs://localhost:11053",
+            "cert": "crypto-config/peerOrganizations/firms.chainedbids.uva.es/peers/peer0.firms.chainedbids.uva.es/tls/ca.crt",
+            "hostnameOverride": "peer1.firms.chainedbids.uva.es"
+        },
+        {
+            "requestURL": "grpcs://localhost:7051",
+            "cert": "crypto-config/peerOrganizations/people.chainedbids.uva.es/peers/peer0.people.chainedbids.uva.es/tls/ca.crt",
+            "hostnameOverride": "peer0.people.chainedbids.uva.es"
+        },
+        {
+            "requestURL": "grpcs://localhost:8051",
+            "cert": "crypto-config/peerOrganizations/people.chainedbids.uva.es/peers/peer0.people.chainedbids.uva.es/tls/ca.crt",
+            "hostnameOverride": "peer1.people.chainedbids.uva.es"
+        },
+        {
+            "requestURL": "grpcs://localhost:9051",
+            "cert": "crypto-config/peerOrganizations/people.chainedbids.uva.es/peers/peer0.people.chainedbids.uva.es/tls/ca.crt",
+            "hostnameOverride": "peer2.people.chainedbids.uva.es"
+        }
+    ],
+    "ca": {
+        "url": "https://localhost:8054",
+        "name": "ca-firms",
+        "cert": "crypto-config/peerOrganizations/firms.chainedbids.uva.es/peers/peer0.firms.chainedbids.uva.es/tls/ca.crt",
+        "hostnameOverride": "ca.firms.chainedbids.uva.es"
+    },
+    "orderers": [
+        {
+            "url" : "grpcs://localhost:7050",
+            "cert": "crypto-config/ordererOrganizations/chainedbids.uva.es/orderers/orderer.chainedbids.uva.es/tls/ca.crt",
+            "hostnameOverride": "orderer.chainedbids.uva.es"
+        }
+    ],
+    "channel": "chainedbidschannel",
+    "timeout": 300
+}

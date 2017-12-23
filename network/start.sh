@@ -17,7 +17,7 @@ if [ "${COUCHDB}" == false ]; then
     CHANNEL_NAME=chainedbidschannel TIMEOUT=10 DELAY=3 docker-compose -f docker-compose.yaml up -d
 else
     echo "Starting using CouchDB..."
-    CHANNEL_NAME=chainedbidschannel TIMEOUT=10 DELAY=3 docker-compose -f docker-compose.yaml -f docker-compose-couch.yaml up -d
+    CHANNEL_NAME=chainedbidschannel TIMEOUT=10 DELAY=3 docker-compose -f docker-compose.yaml -f docker-compose-couch.yaml -f docker-compose-cas.yaml up -d
 fi
 
 docker logs -f cli

@@ -3,7 +3,7 @@
 export CHANNEL_NAME=chainedbidschannel
 export TIMEOUT=300
 
-docker-compose -f docker-compose.yaml down
+docker-compose -f docker-compose.yaml -f docker-compose-couch.yaml down
 
 function clearContainers () {
   CONTAINER_IDS=$(docker ps -aq)

@@ -1,0 +1,43 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '2'
+
+networks:
+  chainedbids:
+services:
+  ca.people:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-people
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.people.chainedbids.uva.es-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/621599c9299ed47142e8820f1196feaecc4f97f21474a1d9fa36bc3bb9fe1de9_sk
+    ports:
+      - "7054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.people.chainedbids.uva.es-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/621599c9299ed47142e8820f1196feaecc4f97f21474a1d9fa36bc3bb9fe1de9_sk -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/people.chainedbids.uva.es/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerPeople
+    networks:
+      - chainedbids
+
+  ca.firms:
+    image: hyperledger/fabric-ca
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-firms
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.firms.chainedbids.uva.es-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/b07321cae7d28bb9f863446c75a23d332c8fb44117fbc1d900c45526a11569a6_sk
+    ports:
+      - "8054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.firms.chainedbids.uva.es-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/b07321cae7d28bb9f863446c75a23d332c8fb44117fbc1d900c45526a11569a6_sk -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/firms.chainedbids.uva.es/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerFirms
+    networks:
+      - chainedbids
