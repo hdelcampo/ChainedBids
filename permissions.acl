@@ -1,0 +1,153 @@
+/*
+ * BUSINESS ACCESS CONTROL
+ *
+ * Access control rules for resources within the auction business
+ * network.
+ *
+ * The rules are evaluated in order, and the first rule whose condition
+ * matches determines whether access is granted or denied.
+ *
+ * If no rule match then access is denied.
+ *
+ * If this file is missing from the business network then all access is
+ * permitted.
+ */
+
+
+/*
+ * Access control rules involving `User` and `Product`
+ */
+
+// Only a User can create a Product
+rule ProductCreation {
+    description: "Only a User can create a Product"
+    participant: "es.uva.asai.chainedbids.User"
+    operation: CREATE
+    resource: "es.uva.asai.chainedbids.Product"
+    action: ALLOW
+}
+
+// Only the User selling a Product can modify or delete it
+rule ProductModification {
+    description: "Only the seller of a Product can modify or delete it"
+    participant(u): "es.uva.asai.chainedbids.User"
+    operation: UPDATE, DELETE
+    resource(p): "es.uva.asai.chainedbids.Product"
+    condition: (p.seller.getIdentifier() == u.getIdentifier())
+    action: ALLOW
+}
+
+// Only the User owner of a Product can read about it when it is not being auctioned
+rule AccessProduct {
+    description: "Only the User owner of a Product can read about it when it is not being auctioned"
+    participant(u): "es.uva.asai.chainedbids.User"
+    operation: READ
+    resource(p): "es.uva.asai.chainedbids.Product"
+    condition: (p.seller.getIdentifier() == u.getIdentifier())
+    action: ALLOW
+}
+
+// Only a User different from the seller can make an offer for a Product
+rule Offer {
+    description: "Only a User different from the seller can make an offer for a Product"
+    participant(u): "es.uva.asai.chainedbids.User"
+    operation: UPDATE
+    resource(p): "es.uva.asai.chainedbids.Product"
+    transaction(tx): "es.uva.asai.chainedbids.Offer"
+    condition: (tx.bidder.getIdentifier() != tx.product.seller.getIdentifier())
+    action: ALLOW
+}
+
+// Any User can see any Product being auctioned
+rule SearchCurrentAuctions {
+    description: "Any User can see any Product being auctioned"
+    participant(u): "es.uva.asai.chainedbids.User"
+    operation: READ
+    resource(p): "es.uva.asai.chainedbids.Product"
+    condition: (p.state == "FOR_AUCTION")
+    action: ALLOW
+}
+
+
+/*
+ * Access control rules involving a `Payment Gateway Firm` and `Product`
+ */
+
+// A payment gateway Firm can only read and update a Product payment performed by said Firm
+rule PaymentGateway {
+    description: "A payment gateway Firm can read only about a Product object of a transaction performed by said Firm"
+    participant(f): "es.uva.asai.chainedbids.Firm"
+    operation: READ, UPDATE
+    resource(p): "es.uva.asai.chainedbids.Product"
+    transaction(tx): "es.uva.asai.chainedbids.Payment"
+    condition: (tx.type == "NORMAL" && tx.gateway.type == "PAYMENT_GATEWAY" && tx.firm.getIdentifier() == f.getIdentifier())
+    action: ALLOW
+}
+
+
+/*
+ * Access control rules involving a `Carrier Firm` and `Product`
+ */
+
+// Only the carrier delivering a Product can read or update a Product
+rule CarrierOnRoute {
+    description: "Only the carrier delivering a Product can read or update a Product"
+    participant(f): "es.uva.asai.chainedbids.Firm"
+    operation: READ, UPDATE
+    resource(p): "es.uva.asai.chainedbids.Product"
+    transaction(tx): "es.uva.asai.chainedbids.ProductSending"
+    condition: (tx.carrier.type == "CARRIER" && tx.carrier.getIdentifier() == f.getIdentifier())
+    action: ALLOW
+}
+
+rule CarrierOnDelivery {
+    description: "Only the carrier delivering a Product can read or update a Product"
+    participant(f): "es.uva.asai.chainedbids.Firm"
+    operation: READ, UPDATE
+    resource(p): "es.uva.asai.chainedbids.Product"
+    transaction(tx): "es.uva.asai.chainedbids.ProductDelivery"
+    condition: (tx.carrier.type == "CARRIER" && tx.carrier.getIdentifier() == f.getIdentifier())
+    action: ALLOW
+}
+
+
+/*
+ * Access control rules involving `Employee` and `Product`
+ */
+
+// A registered Employee can only read about a Product that has been delivered
+rule IssueAfterDelivery {
+    description: "A registered Employee can only read about a Product that has been delivered"
+    participant(e): "es.uva.asai.chainedbids.Employee"
+    operation: READ, UPDATE
+    resource(p): "es.uva.asai.chainedbids.Product"
+    transaction(tx): "es.uva.asai.chainedbids.Incident"
+    condition: (tx.product.state == "DELIVERED")
+    action: ALLOW
+}
+
+/*
+ * Access control rules involving all participants
+ */
+
+
+
+/*
+ * NETWORK ACCESS CONTROL
+ */
+
+rule NetworkAdminUser {
+    description: "Grant business network administrators full access to user resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "**"
+    action: ALLOW
+}
+
+rule NetworkAdminSystem {
+    description: "Grant business network administrators full access to system resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
+}
